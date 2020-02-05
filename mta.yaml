@@ -1,0 +1,63 @@
+ID: BPMServicesFLP
+_schema-version: '2.1'
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: BPMServicesFLP_appRouter
+    type: approuter.nodejs
+    path: BPMServicesFLP_appRouter
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: BPMServicesFLP_html5_repo_runtime
+      - name: uaa_bpmservices
+      - name: workflow
+      - name: processvisibility
+      - name: portal_bpmservices
+      - name: businessrules
+  - name: BPMFLP
+    type: com.sap.portal.content
+    path: BPMFLP
+    parameters:
+      stack: cflinuxfs3
+      memory: 128M
+      buildpack: 'https://github.com/cloudfoundry/nodejs-buildpack/releases/download/v1.6.39/nodejs-buildpack-cflinuxfs3-v1.6.39.zip'
+    requires:
+      - name: uaa_bpmservices
+      - name: workflow
+      - name: processvisibility
+      - name: portal_bpmservices
+resources:
+  - name: BPMServicesFLP_html5_repo_runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: uaa_bpmservices
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: portal_bpmservices
+    parameters:
+      service-plan: standard
+      service: portal
+    type: org.cloudfoundry.managed-service
+  - name: processvisibility
+    parameters:
+      service-plan: lite
+      service: processvisibility
+    type: org.cloudfoundry.managed-service
+  - name: workflow
+    parameters:
+      service-plan: lite
+      service: workflow
+    type: org.cloudfoundry.managed-service
+  - name: businessrules
+    parameters:
+      service-plan: lite
+      service: business-rules
+    type: org.cloudfoundry.managed-service
